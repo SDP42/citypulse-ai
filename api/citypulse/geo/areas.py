@@ -36,7 +36,7 @@ class AreaIndex:
 
 
 def load_index(con: sqlite3.Connection, synthetic: bool) -> AreaIndex:
-    rows = con.execute("SELECT area_id,name,geometry_geojson FROM area WHERE is_synthetic=? ORDER BY area_id",
+    rows = con.execute("SELECT area_id,name,geometry_geojson FROM area WHERE is_synthetic=? AND is_active=1 ORDER BY area_id",
                        (int(synthetic),)).fetchall()
     ids, geoms, names = [], [], {}
     for r in rows:

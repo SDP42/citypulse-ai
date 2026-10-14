@@ -16,9 +16,9 @@ from citypulse.core.provenance import new_id, sha256_bytes
 from citypulse.core.settings import ROOT, Settings
 from citypulse.geo.areas import load_index
 from citypulse.ingest.normalise import SCHEMA_VERSION, normalise_row
-from citypulse.ingest.parse import auto_map, parse_csv, validate_mapping
+from citypulse.ingest.parse import auto_map, detect_format, parse_csv, parse_geojson_points, validate_mapping
 
-PARSER_VERSION = "csv-1.0.0"
+PARSER_VERSIONS = {"csv": "csv-1.0.0", "geojson": "geojson-points-1.0.0"}
 UPLOAD_DIR = ROOT / "data" / "raw" / "uploads"
 IMPORTABLE_ACCESS = {"local-generated", "user-provided-file"}
 
@@ -38,8 +38,8 @@ def _source(con: sqlite3.Connection, source_id: str, settings: Settings, *, need
     return s
 
 
-def _process(con, data: bytes, source_id: str, mapping_override: dict | None, tz_name: str, settings: Settings, now: datetime):
-    parsed = parse_csv(data)
+def _process(con, data: bytes, fmt: str, source_id: str, mapping_override: dict | None, tz_name: str, settings: Settings, now: datetime):
+    parsed = parse_geojson_points(data) if fmt == "geojson" else parse_csv(data)
     mapping = auto_map(parsed.headers)
     if mapping_override:
         mapping.update({k: (v or None) for k, v in mapping_override.items()})
@@ -101,12 +101,14 @@ def run_import(con: sqlite3.Connection, settings: Settings, *, data: bytes, file
     now = now or datetime.now(timezone.utc)
     _source(con, source_id, settings, need_licence=licence_declared, commit=commit)
     sha = sha256_bytes(data)
+    fmt = detect_format(filename, data)
+    PARSER_VERSION = PARSER_VERSIONS[fmt]
 
     prior = con.execute("SELECT batch_id,status FROM ingestion_batch WHERE source_id=? AND file_sha256=? AND parser_version=?",
                         (source_id, sha, PARSER_VERSION)).fetchone()
     already = prior is not None and prior["status"] in ("accepted", "quarantined")
 
-    parsed, mp, accepted, quarantined, dup_in_file, errors, flags = _process(con, data, source_id, mapping, tz_name, settings, now)
+    parsed, mp, accepted, quarantined, dup_in_file, errors, flags = _process(con, data, fmt, source_id, mapping, tz_name, settings, now)
     new, dup_existing, conflicts = _existing_filter(con, source_id, accepted)
     for r in conflicts:
         errors["conflicting_duplicate_id"] += 1
@@ -114,7 +116,7 @@ def run_import(con: sqlite3.Connection, settings: Settings, *, data: bytes, file
 
     summary = {
         "source_id": source_id, "data_mode": settings.data_mode, "file_name": filename, "file_sha256": sha,
-        "parser_version": PARSER_VERSION, "encoding": parsed.encoding, "delimiter": parsed.delimiter,
+        "parser_version": PARSER_VERSION, "format": fmt, "encoding": parsed.encoding, "delimiter": parsed.delimiter,
         "headers": parsed.headers, "mapping": mp, "rows_total": len(parsed.rows),
         "rows_accepted": len(new), "rows_quarantined": len(quarantined),
         "rows_duplicate": dup_in_file + dup_existing, "duplicates_in_file": dup_in_file,

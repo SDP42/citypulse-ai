@@ -1,6 +1,6 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { api } from "@/lib/api";
+import { api, exportUrl } from "@/lib/api";
 import { describe, formatWhen } from "@/lib/format";
 
 const PAGE = 25;
@@ -20,6 +20,7 @@ export function IncidentsPanel() {
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="text-sm text-muted"><b className="text-slate-200">{data.total.toLocaleString()}</b> reports (not confirmed incidents) · {data.quality.with_point_coordinates.toLocaleString()} with a point · {data.quality.without_point_coordinates.toLocaleString()} without (never given a fake point)</div>
+        <a href={exportUrl(category || undefined)} download className="rounded bg-line px-3 py-1 text-sm hover:text-white" title="Spreadsheet-safe CSV; file name says SYNTHETIC in synthetic mode">Export CSV</a>
         <select aria-label="Category" className="rounded border border-line bg-panel px-2 py-1 text-sm" value={category} onChange={(e) => { setCategory(e.target.value); setOffset(0); }}>
           {CATS.map((c) => <option key={c} value={c}>{c || "all categories"}</option>)}
         </select>

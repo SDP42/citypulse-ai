@@ -37,3 +37,15 @@ export function sniffHeaders(text: string): string[] {
   const delim = [",", ";", "\t", "|"].map((d) => [d, first.split(d).length] as const).sort((a, b) => b[1] - a[1])[0][0];
   return first.split(delim).map((h) => h.replace(/^"|"$/g, "").trim()).filter(Boolean);
 }
+
+export const BOUNDARY_TEXT: Record<string, string> = {
+  invalid_geometry: "Polygon is invalid (e.g. self-intersecting)",
+  not_polygon: "Feature is not a Polygon/MultiPolygon",
+  bad_coordinates: "Coordinates missing, non-numeric or outside lon/lat range",
+  missing_name: "Feature has no name",
+  duplicate_name: "Two features share a name",
+  no_name_property: "No name property found — choose one",
+};
+
+/** Share of a total as a percentage string; "—" when the total is 0 (never "NaN%" or a fake 0%). */
+export const pct = (n: number, total: number) => (total > 0 ? `${((n / total) * 100).toFixed(1)}%` : "—");

@@ -71,7 +71,7 @@ export function ImportPanel() {
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       <section className="rounded-lg border border-line bg-panel p-5">
-        <h2 className="text-lg font-semibold">Import a CSV</h2>
+        <h2 className="text-lg font-semibold">Import reports (CSV or GeoJSON points)</h2>
         <p className="mt-1 text-sm text-muted">Preview first — nothing is stored until you commit. Rows are reports, not confirmed incidents. {synthetic ? "App is in synthetic mode: only synthetic sources are accepted." : "App is in real mode: synthetic sources are refused."}</p>
         <div className="mt-4 grid gap-3 md:grid-cols-2">
           <label className="text-sm">Source
@@ -79,8 +79,8 @@ export function ImportPanel() {
               {options.map((o) => <option key={o.source_id} value={o.source_id}>{o.source_name}</option>)}
             </select>
           </label>
-          <label className="text-sm">CSV file
-            <input type="file" accept=".csv,text/csv" className="mt-1 w-full text-sm" onChange={(e) => onFile(e.target.files?.[0] ?? null)} />
+          <label className="text-sm">File (CSV, or GeoJSON of Point features)
+            <input type="file" accept=".csv,text/csv,.geojson,.json,application/geo+json" className="mt-1 w-full text-sm" onChange={(e) => onFile(e.target.files?.[0] ?? null)} />
           </label>
           {needsLicence && (
             <label className="text-sm md:col-span-2">Licence / permission you hold for this data (required to commit)

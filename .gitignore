@@ -19,3 +19,5 @@ data/tiles/*
 
 data/processed/*
 !data/processed/.gitkeep
+
+*.tsbuildinfo

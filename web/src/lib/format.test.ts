@@ -17,3 +17,14 @@ suite("format", () => {
     expect(sniffHeaders("a\tb\n1\t2")).toEqual(["a", "b"]);
   });
 });
+
+import { BOUNDARY_TEXT, pct } from "./format";
+suite("pct and boundary text", () => {
+  it("never shows NaN or a fake 0% for an empty total", () => {
+    expect(pct(0, 0)).toBe("—");
+    expect(pct(1, 4)).toBe("25.0%");
+  });
+  it("explains boundary problems in plain language", () => {
+    expect(BOUNDARY_TEXT.invalid_geometry).toMatch(/self-intersecting/);
+  });
+});

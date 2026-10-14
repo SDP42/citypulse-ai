@@ -3,7 +3,10 @@ import csv
 import io
 from dataclasses import dataclass, field
 
+import json
+
 from citypulse.core.errors import AppError, PayloadTooLarge
+from citypulse.geo.geojson import crs_basis, load_feature_collection
 
 MAX_ROWS = 200_000
 MAX_FIELD_CHARS = 10_000
@@ -90,3 +93,49 @@ def validate_mapping(mapping: dict[str, str | None], headers: list[str]) -> None
     if missing:
         raise AppError(f"Required field(s) not mapped: {', '.join(missing)}.",
                        fields={m: "unmapped" for m in missing}, code="missing_required_mapping")
+
+
+def detect_format(filename: str, data: bytes) -> str:
+    name = (filename or "").lower()
+    if name.endswith((".geojson", ".json")) or data.lstrip()[:1] == b"{":
+        return "geojson"
+    return "csv"
+
+
+def _cell(v) -> str:
+    if v is None:
+        return ""
+    return json.dumps(v, ensure_ascii=False) if isinstance(v, (dict, list)) else str(v)
+
+
+def parse_geojson_points(data: bytes) -> Parsed:
+    """Point FeatureCollection -> the same row shape the CSV path produces (one pipeline, one set of rules).
+    Any non-Point geometry refuses the whole file: partial ingestion of a mixed file would be misleading."""
+    gj = load_feature_collection(data)
+    _, basis = crs_basis(gj)
+    bad, keys, rows = [], [], []
+    for i, f in enumerate(gj["features"]):
+        if not isinstance(f, dict):
+            bad.append({"feature": i, "type": None})
+            continue
+        g = f.get("geometry")
+        if g is not None and g.get("type") != "Point":
+            bad.append({"feature": i, "type": g.get("type")})
+            continue
+        props = f.get("properties") or {}
+        for k in props:
+            if k not in keys:
+                keys.append(k)
+        row = {k: _cell(v) for k, v in props.items()}
+        c = (g or {}).get("coordinates") or []
+        if len(c) >= 2:
+            row["longitude"], row["latitude"] = _cell(c[0]), _cell(c[1])  # GeoJSON order is [lon, lat]
+        rows.append(row)
+    if bad:
+        raise AppError(f"{len(bad)} feature(s) are not Points; this importer accepts Point features only "
+                       f"(use the boundary importer for polygons).", fields={"first_bad_features": json.dumps(bad[:5])},
+                       code="geometry_not_point")
+    headers = keys + [h for h in ("longitude", "latitude") if h not in keys]
+    rows = [{h: r.get(h, "") for h in headers} for r in rows]
+    flags = ["crs_assumed_wgs84"] if basis == "assumed-wgs84" else []
+    return Parsed(headers=headers, rows=rows, delimiter="geojson", encoding="utf-8", flags=flags)

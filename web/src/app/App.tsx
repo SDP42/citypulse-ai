@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { DataModeBadge } from "@/components/DataModeBadge";
+import { BoundaryPanel } from "@/features/import/BoundaryPanel";
+import { OverviewPanel } from "@/features/overview/OverviewPanel";
 import { ImportPanel } from "@/features/import/ImportPanel";
 import { IncidentsPanel } from "@/features/incidents/IncidentsPanel";
 import { SourcesPanel } from "@/features/sources/SourcesPanel";
@@ -10,7 +12,7 @@ const TABS = ["Overview", "Map", "Timeline", "Incidents", "Sources", "Evidence",
 type Tab = (typeof TABS)[number];
 
 export default function App() {
-  const [tab, setTab] = useState<Tab>("Import");
+  const [tab, setTab] = useState<Tab>("Overview");
   const { data: health } = useQuery({ queryKey: ["health"], queryFn: api.health, retry: false });
   return (
     <div className="min-h-screen">
@@ -25,7 +27,7 @@ export default function App() {
         <DataModeBadge health={health} />
       </header>
       <main className="p-6">
-        {tab === "Sources" ? <SourcesPanel /> : tab === "Import" ? <ImportPanel /> : tab === "Incidents" ? <IncidentsPanel /> : <p className="text-muted">{tab} — planned in a later phase (see docs/PHASES.md).</p>}
+        {tab === "Sources" ? <SourcesPanel /> : tab === "Overview" ? <OverviewPanel /> : tab === "Import" ? <div className="space-y-8"><ImportPanel /><BoundaryPanel /></div> : tab === "Incidents" ? <IncidentsPanel /> : <p className="text-muted">{tab} — planned in a later phase (see docs/PHASES.md).</p>}
       </main>
     </div>
   );

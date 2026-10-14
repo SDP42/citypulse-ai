@@ -9,7 +9,7 @@ from citypulse.sources.registry import load_register
 
 def test_blank_db_migrates():
     con = sqlite3.connect(":memory:")
-    assert migrate(con) == ["001_core.sql", "002_import.sql"]
+    assert migrate(con) == ["001_core.sql", "002_import.sql", "003_boundaries_analytics.sql"]
     assert migrate(con) == []  # idempotent
     tables = {r[0] for r in con.execute("select name from sqlite_master where type='table'")}
     assert {"source_registry", "observation", "ingestion_batch", "quarantine_row"} <= tables

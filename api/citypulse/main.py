@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from citypulse.api.routes import health, imports, observations, sources
+from citypulse.api.routes import analytics, boundaries, export, health, imports, observations, sources
 from citypulse.core.errors import install_handlers
 from citypulse.db.connection import connect, migrate
 from citypulse.db.seed import seed_all
@@ -32,3 +32,6 @@ app.include_router(health.router)
 app.include_router(sources.router)
 app.include_router(imports.router)
 app.include_router(observations.router)
+app.include_router(export.router)
+app.include_router(analytics.router)
+app.include_router(boundaries.router)
