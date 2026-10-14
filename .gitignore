@@ -1,0 +1,21 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+node_modules/
+web/dist/
+.DS_Store
+
+# Data: only fixtures are committed
+data/raw/*
+data/staging/*
+data/db/*
+data/models/*
+data/tiles/*
+!data/*/.gitkeep
+
+data/processed/*
+!data/processed/.gitkeep

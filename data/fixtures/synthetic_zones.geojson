@@ -1,0 +1,329 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "properties": {
+    "zone_id": "Z-0-0",
+    "name": "Synthetic Zone 00",
+    "boundary_source": "synthetic",
+    "synthetic": true
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       72.82,
+       18.95
+      ],
+      [
+       72.85333333333332,
+       18.95
+      ],
+      [
+       72.85333333333332,
+       18.983333333333334
+      ],
+      [
+       72.82,
+       18.983333333333334
+      ],
+      [
+       72.82,
+       18.95
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "zone_id": "Z-0-1",
+    "name": "Synthetic Zone 01",
+    "boundary_source": "synthetic",
+    "synthetic": true
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       72.82,
+       18.983333333333334
+      ],
+      [
+       72.85333333333332,
+       18.983333333333334
+      ],
+      [
+       72.85333333333332,
+       19.01666666666667
+      ],
+      [
+       72.82,
+       19.01666666666667
+      ],
+      [
+       72.82,
+       18.983333333333334
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "zone_id": "Z-0-2",
+    "name": "Synthetic Zone 02",
+    "boundary_source": "synthetic",
+    "synthetic": true
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       72.82,
+       19.016666666666666
+      ],
+      [
+       72.85333333333332,
+       19.016666666666666
+      ],
+      [
+       72.85333333333332,
+       19.05
+      ],
+      [
+       72.82,
+       19.05
+      ],
+      [
+       72.82,
+       19.016666666666666
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "zone_id": "Z-1-0",
+    "name": "Synthetic Zone 10",
+    "boundary_source": "synthetic",
+    "synthetic": true
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       72.85333333333332,
+       18.95
+      ],
+      [
+       72.88666666666666,
+       18.95
+      ],
+      [
+       72.88666666666666,
+       18.983333333333334
+      ],
+      [
+       72.85333333333332,
+       18.983333333333334
+      ],
+      [
+       72.85333333333332,
+       18.95
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "zone_id": "Z-1-1",
+    "name": "Synthetic Zone 11",
+    "boundary_source": "synthetic",
+    "synthetic": true
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       72.85333333333332,
+       18.983333333333334
+      ],
+      [
+       72.88666666666666,
+       18.983333333333334
+      ],
+      [
+       72.88666666666666,
+       19.01666666666667
+      ],
+      [
+       72.85333333333332,
+       19.01666666666667
+      ],
+      [
+       72.85333333333332,
+       18.983333333333334
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "zone_id": "Z-1-2",
+    "name": "Synthetic Zone 12",
+    "boundary_source": "synthetic",
+    "synthetic": true
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       72.85333333333332,
+       19.016666666666666
+      ],
+      [
+       72.88666666666666,
+       19.016666666666666
+      ],
+      [
+       72.88666666666666,
+       19.05
+      ],
+      [
+       72.85333333333332,
+       19.05
+      ],
+      [
+       72.85333333333332,
+       19.016666666666666
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "zone_id": "Z-2-0",
+    "name": "Synthetic Zone 20",
+    "boundary_source": "synthetic",
+    "synthetic": true
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       72.88666666666667,
+       18.95
+      ],
+      [
+       72.92,
+       18.95
+      ],
+      [
+       72.92,
+       18.983333333333334
+      ],
+      [
+       72.88666666666667,
+       18.983333333333334
+      ],
+      [
+       72.88666666666667,
+       18.95
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "zone_id": "Z-2-1",
+    "name": "Synthetic Zone 21",
+    "boundary_source": "synthetic",
+    "synthetic": true
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       72.88666666666667,
+       18.983333333333334
+      ],
+      [
+       72.92,
+       18.983333333333334
+      ],
+      [
+       72.92,
+       19.01666666666667
+      ],
+      [
+       72.88666666666667,
+       19.01666666666667
+      ],
+      [
+       72.88666666666667,
+       18.983333333333334
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "zone_id": "Z-2-2",
+    "name": "Synthetic Zone 22",
+    "boundary_source": "synthetic",
+    "synthetic": true
+   },
+   "geometry": {
+    "type": "Polygon",
+    "coordinates": [
+     [
+      [
+       72.88666666666667,
+       19.016666666666666
+      ],
+      [
+       72.92,
+       19.016666666666666
+      ],
+      [
+       72.92,
+       19.05
+      ],
+      [
+       72.88666666666667,
+       19.05
+      ],
+      [
+       72.88666666666667,
+       19.016666666666666
+      ]
+     ]
+    ]
+   }
+  }
+ ]
+}

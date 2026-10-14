@@ -1,0 +1,1 @@
+"""Zone A. Source registry + licence status (candidate|verified|research-only|blocked|disabled). Adapters share one interface: discover/fetch/validate/normalise/report. Fixture mode needs no network."""
