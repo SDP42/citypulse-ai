@@ -4,7 +4,10 @@
 - **You (product owner/developer):** approve stack & phase gates; run Git (commit/push); decide the pilot area; approve downloads/accounts.
 - **Claude Code:** proposes, implements approved batches, tests, reports. Never commits/pushes. Never starts the next batch unprompted.
 
-## The loop (per batch, 3–4 related tasks)
+## Unit of work = one sub-phase (`N.M` in [PHASES.md](PHASES.md))
+Each sub-phase is one small batch (1–3 related tasks) with its own *done-when* test. Several sub-phases may be approved together, but each is tested and logged separately so a failure points at one small change.
+
+## The loop (per sub-phase)
 1. **Restate** intended files + tests before editing.
 2. **Implement** small vertical slice (domain logic isolated from UI & network).
 3. **Test** — unit + contract (+ integration/adversarial where relevant). Offline only by default.

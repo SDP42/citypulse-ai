@@ -80,6 +80,51 @@ Newest at the bottom. Each entry: date · batch · what changed · evidence · o
 | Real-data path | NOT TESTED | no real complaint dataset exists; wards/census/OSM/rainfall are context layers, not yet loaded into analytics |
 Explicit risks: boundary vintage unstated (DataMeet); no real observations; MCGM/IMD sources unresolved.
 
+## 2026-10-14 · Phase 3 batch 2 + Phase 4 start (GeoJSON, boundaries, export, analytics + lineage)
+**Why:** finish dependable ingestion (Phase 3) and deliver the first traceable numbers (Phase 4) — the core product promise that any number can be traced to its rows.
+
+**What was built** (details in [API.md](API.md)):
+1. **GeoJSON point import** through the same pipeline/rules as CSV (one set of validation; cross-format dedupe).
+2. **Boundary registry:** QA report (validity, names, CRS basis, overlaps; gaps explicitly "not assessed"), whole-file rejection on blockers, versioned activation, history kept.
+3. **Formula-injection-safe CSV export** of observations and quarantine, labelled SYNTHETIC in file name and column.
+4. **Analytics + lineage:** `summary-1.0.0`, `trend-1.0.0`, deterministic `run_id`s, `/lineage/analysis-runs/{id}` with live "are the rows still the same?" verification; web Overview page (KPIs, trend chart with honest gap buckets, category/area breakdown) and a **Provenance X-ray v0** drawer.
+- Fix made along the way: date filters now use the same Asia/Kolkata day as trends (they briefly used UTC days → a number and its rows could disagree at midnight).
+
+**Files:** `api/migrations/003_boundaries_analytics.sql`; `api/citypulse/{db/queries.py, geo/geojson.py, geo/boundaries.py, analytics/metrics.py, ingest/parse.py (+GeoJSON), ingest/pipeline.py (format switch), api/routes/{analytics,boundaries,export,observations}.py}`; web `features/{overview/{OverviewPanel,TrendChart},provenance/LineageDrawer,import/BoundaryPanel}.tsx`, `lib/{api,format}.ts`; tests `tests/integration/{test_geojson_boundaries,test_analytics}.py`, `tests/contract/test_analytics_api.py`, `web/src/features/overview/TrendChart.test.tsx`.
+
+**Evidence (executed 2026-10-14):**
+- `make test` → backend **75 passed**, web **10 passed**; `tsc -b` clean; `vite build` OK.
+- Hand-calculated analytics on the 12-row CSV: totals 5 / with point 3 / date-only 1 / unresolved area 1; daily series `1,1,1,1,0(gap),1`; ISO weeks `2 + 3`; per-10k `4/20000*10000 = 2.0`, and `None` for no/zero population.
+- **Mutation check:** deliberately breaking the IST offset and the export neutraliser made the corresponding tests fail; code restored (tests do discriminate).
+- **Upgrade path:** the live dev DB (created at migration 002) upgraded to 003 on startup with data intact; `/analytics/summary` twice → identical `run_fef9527c7183`.
+- **Real browser:** Overview renders (1,405 reports, trend, categories, areas "not calculated"); clicking a number opens the lineage drawer: metric → run → "✓ rows behind this number are exactly the rows it was computed from" → batch + sha256 → source SYNTHETIC + licence → first rows.
+- **Real BMC wards file through boundary QA (preview only, nothing stored):** 24/24 usable, valid, unique names, 0 overlaps, CRS declared WGS84, bbox 72.776,18.894–72.98,19.27.
+
+**Failure cases covered:** malformed/empty GeoJSON, non-Point in a point file, unsupported CRS, self-intersecting/duplicate/missing-name/non-polygon/out-of-range boundaries, label missing, licence missing (real mode), boundary re-import & failed-retry, mode isolation of areas, formula/negative-number export, filters, empty DB, undated rows, IST midnight boundary, data-changed-since-run, unknown run, invalid granularity/date.
+
+**Risks / limits:** gap detection between polygons is not implemented; boundary activation does not re-assign existing observations; per-10k uses Census 2011 (15-year-old) and is caveated; metric digests hash all matching IDs in Python (fine at 10⁵ rows, revisit beyond); analysis runs are recorded by GET (idempotent; deviation documented); no map yet; `make dev` still not run as a single command (NOT TESTED).
+
+**Undo:** delete `003_boundaries_analytics.sql` + the new modules/routes/web features listed above and the main.py router lines; `rm data/db/citypulse.sqlite*` (migration 003 cannot be rolled back on an existing DB).
+
+### Phase gates (note 133)
+**Phase 3 — Schema & ingestion → PASS**
+| Criterion | Result | Evidence |
+|---|---|---|
+| Blank-DB migration + upgrade | PASS | migration test; live DB 002→003 upgrade |
+| Import preview, validation, quarantine | PASS | CSV + GeoJSON tests, UI run |
+| Idempotency (re-import adds 0 rows) | PASS | CSV, GeoJSON, boundaries, cross-format |
+| Formula-injection-safe export | PASS | export test + mutation check |
+| Transactional/whole-batch rules for geometry | PASS | boundary & point-file refusal tests |
+| Real complaint data import | NOT TESTED | no real dataset exists |
+
+**Phase 4 — Deterministic analytics → IN PROGRESS** (summary, trend, lineage PASS; recurrence/related-record explorer NOT STARTED)
+
+## 2026-10-14 · Repo hygiene + sub-phase plan (sub-phase 1.7)
+- Added MIT `LICENSE`, `NOTICE.md` (data attribution & share-alike obligations), rewrote `README.md` (what works / what doesn't, data reality, quick start).
+- `docs/PHASES.md` rewritten: every phase now has sub-phases (`N.M`) with a done-when test and status; Track B phases list their sub-phases. Newly surfaced work: **1.5** verify `make dev`, **1.6** CI, **2.5** tests for data scripts, **2.6** licence resolution, **2.7** real-mode fixture DB, **3.6–3.8** repair/privacy/xlsx, **4.6–4.8** denominators/freshness/metric dictionary.
+- `docs/WORKFLOW.md`: unit of work is a sub-phase.
+- No code changed; no tests added in this entry.
+
 ## Open items needing the user
 1. ~~Approve the stack~~ — approved 2026-10-14.
 2. Boundary vintage: confirm the DataMeet wards match current BMC wards before any real-pilot claim.
